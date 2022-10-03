@@ -140,6 +140,28 @@ void pagination(String tweet, int waitMs){
       }
     }
 
+void blinkFromTweet(String tweet){
+  if (tweet.indexOf("red") != -1)
+  {
+    blinkNum(5, 100, Red);
+  }
+  else if (tweet.indexOf("blue") != -1)
+  {
+    blinkNum(5, 100, Blue);
+  }
+  else if (tweet.indexOf("green") != -1)
+  {
+    blinkNum(5, 100, Green);
+  }
+  else if (tweet.indexOf("amber") != -1)
+  {
+    blinkNum(5, 100, Amber);
+  }
+  else if (tweet.indexOf("white") != -1)
+  {
+    blinkNum(5, 100, White);
+  }
+}
 
 String parseJSON(String response)
 {
