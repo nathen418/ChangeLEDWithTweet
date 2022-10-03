@@ -21,7 +21,7 @@
 - Nate Goldsborough
 
 ## Join my discord server:
-https://dsc.gg/antaresnetwork
+https://antaresnetwork.com/discord
 
 ## License
 - MIT
