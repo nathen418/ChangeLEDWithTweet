@@ -19,8 +19,8 @@ int Red = 18;
 #define LED_BUILTIN 2
 
 LiquidCrystal lcd(S, E, D4, D5, D6, D7);
-const char *ssid = "Some Wifi Name";
-const char *password = "Some Password";
+const char *ssid = "Some Wifi Network";
+const char *password = "Some Wifi Password";
 
 unsigned long lastTime = 0;
 unsigned long timerDelay = 1000;
@@ -119,58 +119,90 @@ void waitingStatus(int state)
   }
 }
 
-//LCD Pagination
-void pagination(String tweet, int waitMs){
-      if (tweet.length() <= 31)
-    {
-      lcd.setCursor(0, 0);
-      lcd.print(tweet.substring(0, 15));
-      lcd.setCursor(0, 1);
-      lcd.print(tweet.substring(16, 31));
-      delay(150);
-      return;
-    }
-      for (int i = 0; i < tweet.length(); i += 31)
-      {
-        lcd.setCursor(0, 0);
-        lcd.print(tweet.substring(i, i + 15));
-        lcd.setCursor(0, 1);
-        lcd.print(tweet.substring(i + 15, i + 31));
-        delay(waitMs);
-      }
-    }
+// LCD Pagination
+void pagination(String tweet, int waitMs)
+{
+  if (tweet.length() <= 31)
+  {
+    lcd.setCursor(0, 0);
+    lcd.print(tweet.substring(0, 15));
+    lcd.setCursor(0, 1);
+    lcd.print(tweet.substring(16, 31));
+    delay(150);
+    return;
+  }
+  for (int i = 0; i < tweet.length(); i += 31)
+  {
+    lcd.setCursor(0, 0);
+    lcd.print(tweet.substring(i, i + 15));
+    lcd.setCursor(0, 1);
+    lcd.print(tweet.substring(i + 15, i + 31));
+    delay(waitMs);
+  }
+}
 
-void blinkFromTweet(String tweet){
-  if (tweet.indexOf("red") != -1)
+void setLEDFromTweet(String tweet)
+{
+  if (tweet.indexOf("Red") != -1)
   {
-    blinkNum(5, 100, Red);
+    digitalWrite(Red, HIGH);
+    digitalWrite(Blue, LOW);
+    digitalWrite(Green, LOW);
+    digitalWrite(Amber, LOW);
+    digitalWrite(White, LOW);
   }
-  else if (tweet.indexOf("blue") != -1)
+  else if (tweet.indexOf("Blue") != -1)
   {
-    blinkNum(5, 100, Blue);
+    digitalWrite(Red, LOW);
+    digitalWrite(Blue, HIGH);
+    digitalWrite(Green, LOW);
+    digitalWrite(Amber, LOW);
+    digitalWrite(White, LOW);
   }
-  else if (tweet.indexOf("green") != -1)
+  else if (tweet.indexOf("Green") != -1)
   {
-    blinkNum(5, 100, Green);
+    digitalWrite(Red, LOW);
+    digitalWrite(Blue, LOW);
+    digitalWrite(Green, HIGH);
+    digitalWrite(Amber, LOW);
+    digitalWrite(White, LOW);
   }
-  else if (tweet.indexOf("amber") != -1)
+  else if (tweet.indexOf("Amber") != -1)
   {
-    blinkNum(5, 100, Amber);
+    digitalWrite(Red, LOW);
+    digitalWrite(Blue, LOW);
+    digitalWrite(Green, LOW);
+    digitalWrite(Amber, HIGH);
+    digitalWrite(White, LOW);
   }
-  else if (tweet.indexOf("white") != -1)
+  else if (tweet.indexOf("White") != -1)
   {
-    blinkNum(5, 100, White);
+    digitalWrite(Red, LOW);
+    digitalWrite(Blue, LOW);
+    digitalWrite(Green, LOW);
+    digitalWrite(Amber, LOW);
+    digitalWrite(White, HIGH);
+  }
+  else
+  {
+    digitalWrite(Red, LOW);
+    digitalWrite(Blue, LOW);
+    digitalWrite(Green, LOW);
+    digitalWrite(Amber, LOW);
+    digitalWrite(White, LOW);
   }
 }
 
 String parseJSON(String response)
 {
-  StaticJsonBuffer<3500>jsonBuffer;
+  StaticJsonBuffer<3500> jsonBuffer;
   const char *json = response.c_str();
-  JsonObject& root = jsonBuffer.parseObject(json);
-  JsonArray& data = root["data"];
-  const char* data_0_id = data[0]["id"];
-  const char* data_0_text = data[0]["text"];  
+  JsonObject &root = jsonBuffer.parseObject(json);
+  JsonArray &data = root["data"];
+  const char *data_0_id = data[0]["id"];
+  const char *data_0_text = data[0]["text"];
+  setLEDFromTweet(data_0_text);
+
   return String(data_0_text);
 }
 
@@ -183,18 +215,19 @@ void request()
   http.addHeader("Authorization", bearer_token);
 
   // Send HTTP GET request
-  blinkNum(1, 100, Blue);
-  lcd.print("Sending Request");
-  int httpResponseCode = http.GET();
-  lcd.clear();
-  blinkNum(1, 100, Blue);
+  //  blinkNum(1, 100, Blue);
+  //  lcd.print("Sending Request");
+    int httpResponseCode = http.GET();
+  //  lcd.clear();
+  //  blinkNum(1, 100, Blue);
 
   if (httpResponseCode == 200)
   {
-    lcd.print("Response: ");
-    lcd.print(httpResponseCode);
-    String payload = http.getString();
-    blinkNum(2, 250, Green);
+    //    lcd.print("Response: ");
+    //    lcd.print(httpResponseCode);
+        String payload = http.getString();
+        Serial.println(payload);
+    //    blinkNum(2, 250, Green);
     lcd.clear();
     pagination(parseJSON(payload), 2500);
   }
@@ -204,14 +237,14 @@ void request()
     lcd.print(httpResponseCode);
     String payload = http.getString();
     Serial.print(payload);
-    blinkNum(8, 90, Red);
+    // blinkNum(8, 90, Red);
     lcd.clear();
   }
   // Free resources
   http.end();
-  blinkNum(1, 600, Amber);
-  waitingStatus(0);
-  lcd.setCursor(0,1);
+  // blinkNum(1, 600, Amber);
+  // waitingStatus(0);
+  lcd.setCursor(0, 1);
   lcd.print("Waiting...");
 }
 
@@ -223,7 +256,6 @@ void setup()
   pinMode(16, OUTPUT);
   pinMode(4, OUTPUT);
   pinMode(15, OUTPUT);
-  // wipe(5,80);
   // Test Function
   test();
 
@@ -232,12 +264,13 @@ void setup()
 
   // Init Serial
   Serial.begin(115200);
-  Serial.print("Hello World\n");
-  Serial.print(WiFi.macAddress());
-  
+  Serial.println("Hello World");
+  Serial.println(WiFi.macAddress());
+  Serial.println("Welcome to the twitter bot that just checks if a tweet has a color in it.");
 
   // Init WiFi
   waitingStatus(0);
+  lcd.print("Waiting...");
 }
 
 void loop()
@@ -245,11 +278,12 @@ void loop()
   // Only enter this if the timer has expired
   if ((millis() - lastTime) > timerDelay)
   {
-    waitingStatus(1);
+    // waitingStatus(1);
     // Check WiFi connection status
     if (WiFi.status() == WL_CONNECTED)
     {
       // send the HTTP POST request
+      delay(10000);
       request();
     }
     else
@@ -257,6 +291,7 @@ void loop()
       blinkNum(5, 70, Red);
       lcd.clear();
       lcd.print("Disconnected");
+      Serial.println("Disconnected");
     }
     lastTime = millis();
   }
