@@ -5,6 +5,7 @@
 
 # Change LED With Tweet
 - Description: This project aims to let you change the color of an LED with a tweet, or turn on a particular color with that same tweet.
+- Made for a `Create A Light` project for my Lighting Productuon (THEATRE 338) class at the University of Wisconsin Milwaukee
 
 ## Rough outline:
 - Tweet a color to a twitter account
