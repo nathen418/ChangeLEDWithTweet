@@ -250,6 +250,12 @@ void request()
 
 void setup()
 {
+  // Init Serial
+  Serial.begin(115200);
+  Serial.println("Hello World");
+  Serial.println(WiFi.macAddress());
+  Serial.println("Welcome to the twitter bot that just checks if a tweet has a color in it.");
+  
   // Set LED pins to Output
   pinMode(18, OUTPUT);
   pinMode(17, OUTPUT);
@@ -262,11 +268,6 @@ void setup()
   // Clear LCD
   lcd.clear();
 
-  // Init Serial
-  Serial.begin(115200);
-  Serial.println("Hello World");
-  Serial.println(WiFi.macAddress());
-  Serial.println("Welcome to the twitter bot that just checks if a tweet has a color in it.");
 
   // Init WiFi
   waitingStatus(0);
