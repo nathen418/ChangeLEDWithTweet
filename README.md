@@ -16,6 +16,7 @@
 
 ## How to run yourself:
 - WIP - No instructions yet
+- Fritzing diagram and parts list to come
 
 
 ## Credits:
